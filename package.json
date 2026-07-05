@@ -1,0 +1,36 @@
+{
+  "name": "issuegraph",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GitHub issue triage agent built on LangGraph, with LangSmith-traced evals and a confidence calibration report",
+  "type": "module",
+  "scripts": {
+    "triage": "tsx src/cli.ts",
+    "eval": "tsx src/run-evals.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
+  "dependencies": {
+    "@langchain/anthropic": "^1.5.1",
+    "@langchain/core": "^1.2.1",
+    "@langchain/langgraph": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "langsmith": "^0.7.15",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}
