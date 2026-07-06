@@ -496,6 +496,28 @@ section {
   font-size: 14px;
 }
 
+/* live scoreboard pulse dot */
+.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: middle;
+  animation: live-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 /* ── evals section ──────────────────────────────────── */
 .eval-grid {
   display: flex;

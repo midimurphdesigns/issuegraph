@@ -39,9 +39,14 @@ export async function POST(req: NextRequest) {
 
   const threadId = `demo-${preset.id}-${crypto.randomUUID()}`;
   return sseResponse((emit) =>
-    streamGraphRun(emit, threadId, {
-      issue: preset.issue,
-      requireApproval: parsed.data.requireApproval,
-    }),
+    streamGraphRun(
+      emit,
+      threadId,
+      {
+        issue: preset.issue,
+        requireApproval: parsed.data.requireApproval,
+      },
+      preset.id,
+    ),
   );
 }

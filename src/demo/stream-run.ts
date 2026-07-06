@@ -8,6 +8,8 @@
 import { Command } from "@langchain/langgraph";
 import { builder } from "../graph";
 import { getCheckpointer } from "./checkpointer";
+import { recordRun } from "./scoreboard";
+import type { Category } from "./presets";
 import type { Issue } from "../github";
 import type { TriageStateType } from "../state";
 
@@ -84,6 +86,7 @@ export async function streamGraphRun(
   emit: (e: SseEvent) => void,
   threadId: string,
   input: { issue: Issue; requireApproval?: boolean } | InstanceType<typeof Command>,
+  presetId?: string,
 ): Promise<void> {
   const checkpointer = await getCheckpointer();
   const graph = builder.compile({ checkpointer });
@@ -103,6 +106,15 @@ export async function streamGraphRun(
       chunk as Record<string, Record<string, unknown>>,
     )) {
       if (node === "__interrupt__") continue; // handled below via getState
+      // Record the classify outcome to the live scoreboard once per run.
+      // Fire-and-forget: a scoreboard write must never block the stream.
+      if (node === "classify" && presetId) {
+        const c = (update as { classification?: { category?: Category; confidence?: number } })
+          .classification;
+        if (c?.category) {
+          void recordRun(presetId, c.category, c.confidence ?? 0);
+        }
+      }
       emit({ type: "node", node, update: sanitizeUpdate(update) });
     }
   }

@@ -64,7 +64,7 @@ export default async function Page() {
       <DemoClient presets={presets} />
 
       <section>
-        <div className="eyebrow">evals + calibration</div>
+        <div className="eyebrow">golden-set benchmark (fixed)</div>
         {snapshot ? (
           <>
             <div className="eval-grid">
@@ -112,12 +112,14 @@ export default async function Page() {
               </tbody>
             </table>
             <p className="note">
-              Numbers from the committed golden-set run ({snapshot.examples}{" "}
-              labeled issues) scored two ways: deterministic exact-match on the
-              category, and an LLM judge on the drafted reply. The Brier score
-              and reliability table check whether the classifier&apos;s stated
-              confidence is honest. Small clean golden sets flatter the model;
-              the interesting work is growing the set with production failures.
+              A fixed reference run, committed at build time from{" "}
+              {snapshot.examples} labeled issues, scored two ways: deterministic
+              exact-match on the category, and an LLM judge on the drafted reply.
+              The Brier score and reliability table check whether the
+              classifier&apos;s stated confidence is honest. This one does not
+              move between deploys; the live scoreboard above grows with real
+              visitor runs. Small clean golden sets flatter the model; the
+              interesting work is growing the set with production failures.
             </p>
           </>
         ) : (

@@ -90,6 +90,8 @@ The web demo triages curated preset issues only. Arbitrary input on a public LLM
 
 The "Human in the loop" toggle on the demo forces the confidence gate to `interrupt()` on every run, so the pause-approve-resume cycle is demonstrable on demand rather than only when the classifier happens to be unsure.
 
+The demo has two eval surfaces. The **golden-set benchmark** is the fixed `pnpm eval` snapshot committed at build time (a reference point that does not move between deploys). The **live scoreboard** turns that offline eval into a live one: each demo preset carries the category a maintainer would assign, so every visitor run is a labeled outcome, recorded to Redis and shown as accumulating per-preset accuracy and mean confidence. The ambiguous preset records confidence but is not graded, since it has no single right answer.
+
 ### Spend + abuse guardrails
 
 - Preset allowlist: no user-controlled text ever reaches a prompt, closing off prompt injection and SSRF.

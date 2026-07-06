@@ -7,6 +7,7 @@
  * panel and resumes via /api/resume with the human's decision.
  */
 import { useCallback, useRef, useState } from "react";
+import LiveScoreboard from "./LiveScoreboard";
 
 type PresetInfo = { id: string; label: string; hint: string };
 
@@ -71,6 +72,9 @@ export default function DemoClient({ presets }: { presets: PresetInfo[] }) {
   } | null>(null);
   const [result, setResult] = useState<FinalResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Bumped after the classify node records to the scoreboard, so the live
+  // board refetches and shows this run's contribution.
+  const [scoreboardKey, setScoreboardKey] = useState(0);
   const redraftsRef = useRef(0);
 
   const reset = () => {
@@ -121,6 +125,9 @@ export default function DemoClient({ presets }: { presets: PresetInfo[] }) {
         ...d,
         classify: `${c.category} @ ${c.confidence}`,
       }));
+      // The server records this classify outcome to the scoreboard; give
+      // the write a beat to land, then refetch the live board.
+      window.setTimeout(() => setScoreboardKey((k) => k + 1), 600);
     }
     if (stage === "draft") {
       const count = (e.update.redraftCount as number) ?? 1;
@@ -321,6 +328,8 @@ export default function DemoClient({ presets }: { presets: PresetInfo[] }) {
           </p>
         )}
       </section>
+
+      <LiveScoreboard refreshKey={scoreboardKey} />
     </>
   );
 }

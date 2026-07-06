@@ -5,10 +5,19 @@
  */
 import type { Issue } from "../github";
 
+export type Category = "bug" | "feature" | "docs" | "question";
+
 export type Preset = {
   id: string;
   label: string;
   hint: string;
+  /**
+   * The category a maintainer would assign. Makes every preset run a
+   * labeled outcome, so the live scoreboard can score real visitor runs.
+   * `slow-after-update` is genuinely ambiguous, hence null: it exists to
+   * trip the confidence gate, not to be graded for accuracy.
+   */
+  expected: Category | null;
   issue: Issue;
 };
 
@@ -19,6 +28,7 @@ export const PRESETS: Preset[] = [
     id: "crash-on-save",
     label: "Crash on save",
     hint: "a clear bug report",
+    expected: "bug",
     issue: {
       ...base,
       title: "App crashes with TypeError when clicking Save",
@@ -29,6 +39,7 @@ export const PRESETS: Preset[] = [
     id: "dark-mode",
     label: "Dark mode request",
     hint: "a feature request",
+    expected: "feature",
     issue: {
       ...base,
       title: "Add dark mode support",
@@ -39,6 +50,7 @@ export const PRESETS: Preset[] = [
     id: "stale-readme",
     label: "Outdated install docs",
     hint: "a docs fix",
+    expected: "docs",
     issue: {
       ...base,
       title: "README install steps are out of date",
@@ -49,6 +61,7 @@ export const PRESETS: Preset[] = [
     id: "timeout-config",
     label: "Timeout question",
     hint: "a usage question",
+    expected: "question",
     issue: {
       ...base,
       title: "How do I configure a custom request timeout?",
@@ -59,6 +72,7 @@ export const PRESETS: Preset[] = [
     id: "slow-after-update",
     label: "Slow after update",
     hint: "ambiguous: bug or question? often trips the confidence gate",
+    expected: null,
     issue: {
       ...base,
       title: "Everything feels slower after updating",
