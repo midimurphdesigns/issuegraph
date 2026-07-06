@@ -37,7 +37,9 @@ export default async function Page() {
   return (
     <main className="wrap">
       <header className="site-header">
-        <h1>issuegraph</h1>
+        <a className="wordmark" href="https://kevinmurphywebdev.com">
+          kevinmurphywebdev.com
+        </a>
         <nav className="links">
           <a
             href="https://github.com/midimurphdesigns/issuegraph"
@@ -46,11 +48,10 @@ export default async function Page() {
           >
             source
           </a>
-          <a href="https://kevinmurphywebdev.com" target="_blank" rel="noreferrer">
-            kevinmurphywebdev.com
-          </a>
         </nav>
       </header>
+
+      <h1 className="display-title">issuegraph</h1>
 
       <p className="tagline">
         A GitHub issue triage agent built on LangGraph. It classifies an issue,
