@@ -88,4 +88,13 @@ The web demo triages curated preset issues only. Arbitrary input on a public LLM
 
 `interrupt()` requires checkpoints that survive between the pause request and the resume request. Serverless instances do not share memory, so the demo uses a Redis checkpointer (`REDIS_URL`) in production and falls back to an in-memory saver for local dev.
 
+### Spend + abuse guardrails
+
+- Preset allowlist: no user-controlled text ever reaches a prompt, closing off prompt injection and SSRF.
+- Per-IP sliding window (10 runs/hour) plus a global daily budget (default 75 runs, `DEMO_DAILY_LIMIT`), both fail-closed when Upstash is unconfigured in production. At worst-case token usage 75 runs costs roughly $3/day.
+- Resume requests make no model call (the gate node is pure logic) so they are IP-limited but exempt from the daily budget.
+- `maxTokens` on every model call, the redraft loop is bounded, and graph recursion is capped by LangGraph's default limit.
+- Thread ids are UUIDs and checkpoints expire after an hour, so paused runs cannot be enumerated or hoarded.
+- Production error events are generic; real errors stay in server logs.
+
 MIT

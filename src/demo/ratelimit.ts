@@ -25,13 +25,26 @@ const perIp = redis
     })
   : null;
 
-const GLOBAL_DAILY_LIMIT = Number(process.env.DEMO_DAILY_LIMIT ?? "200");
+// 75 runs/day. Cost math (Sonnet 4.5): a typical run is classify + draft +
+// guard, ~$0.02; the worst case adds two redraft cycles, ~$0.045. So the
+// ceiling is ~$1.50 typical / ~$3.40 absolute worst per day — inside the
+// $2-3 budget target. The Anthropic console monthly spend limit is the
+// backstop above this.
+const GLOBAL_DAILY_LIMIT = Number(process.env.DEMO_DAILY_LIMIT ?? "75");
 
 export type LimitResult =
   | { ok: true }
   | { ok: false; status: number; message: string };
 
-export async function checkLimits(ip: string): Promise<LimitResult> {
+/**
+ * `countsAgainstBudget: false` for requests that make no model call
+ * (resume only runs the pure-logic gate node) — they stay per-IP limited
+ * but must not burn the daily LLM budget.
+ */
+export async function checkLimits(
+  ip: string,
+  opts: { countsAgainstBudget: boolean } = { countsAgainstBudget: true },
+): Promise<LimitResult> {
   if (!redis || !perIp) {
     // Local dev without Upstash: allow. Deployed without Upstash: refuse.
     if (process.env.NODE_ENV === "production") {
@@ -48,6 +61,8 @@ export async function checkLimits(ip: string): Promise<LimitResult> {
       message: "Rate limit reached (10 runs/hour). Try again later.",
     };
   }
+
+  if (!opts.countsAgainstBudget) return { ok: true };
 
   // Global daily counter — one key per UTC day, expires after 48h.
   const day = new Date().toISOString().slice(0, 10);

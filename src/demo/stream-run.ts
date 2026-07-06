@@ -51,7 +51,16 @@ export function sseResponse(
       try {
         await run(emit);
       } catch (err) {
-        emit({ type: "error", message: err instanceof Error ? err.message : "unknown error" });
+        // Log the real error server-side; never ship internals (API error
+        // bodies, key hints, stack fragments) to the public client.
+        console.error("[issuegraph] run failed:", err);
+        const message =
+          process.env.NODE_ENV === "production"
+            ? "The run failed. Try again in a moment."
+            : err instanceof Error
+              ? err.message
+              : "unknown error";
+        emit({ type: "error", message });
       } finally {
         controller.close();
       }

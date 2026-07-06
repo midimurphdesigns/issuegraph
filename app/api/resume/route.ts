@@ -20,7 +20,9 @@ const Body = z.object({
 export async function POST(req: NextRequest) {
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  const limit = await checkLimits(ip);
+  // Resume runs no model call (the gate node is pure logic), so it is
+  // per-IP limited but does not burn the daily LLM budget.
+  const limit = await checkLimits(ip, { countsAgainstBudget: false });
   if (!limit.ok) {
     return Response.json({ error: limit.message }, { status: limit.status });
   }
