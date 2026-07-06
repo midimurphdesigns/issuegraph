@@ -47,21 +47,24 @@ function afterGuard(state: TriageStateType): string {
 
 // ── Node: the confidence gate + human-in-the-loop interrupt ───────────
 // High confidence → finalize automatically.
-// Low confidence  → interrupt(): pause the graph, surface the draft to a
-// human, and wait. The human resumes with true (approve) or false (reject).
+// Low confidence, or requireApproval set on the run → interrupt(): pause
+// the graph, surface the draft to a human, and wait. The human resumes
+// with approve or reject.
 function gateNode(state: TriageStateType): Partial<TriageStateType> {
   const confidence = state.classification?.confidence ?? 0;
 
-  if (confidence >= CONFIDENCE_GATE) {
+  if (!state.requireApproval && confidence >= CONFIDENCE_GATE) {
     return { status: "auto-finalized" };
   }
 
-  // Below the gate: pause and ask a human. Everything passed to interrupt()
-  // is surfaced to whoever is driving the graph. The resumed value is an
-  // object ({ approved: boolean }) — never a bare boolean, because a falsy
+  // Pause and ask a human. Everything passed to interrupt() is surfaced
+  // to whoever is driving the graph. The resumed value is an object
+  // ({ approved: boolean }) — never a bare boolean, because a falsy
   // resume value trips LangGraph's EmptyInputError.
   const decision = interrupt({
-    reason: "low confidence — human approval required",
+    reason: state.requireApproval
+      ? "human approval requested for this run"
+      : "low confidence — human approval required",
     confidence,
     category: state.classification?.category,
     draft: state.draft,

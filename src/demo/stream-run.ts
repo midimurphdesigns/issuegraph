@@ -83,7 +83,7 @@ export function sseResponse(
 export async function streamGraphRun(
   emit: (e: SseEvent) => void,
   threadId: string,
-  input: { issue: Issue } | InstanceType<typeof Command>,
+  input: { issue: Issue; requireApproval?: boolean } | InstanceType<typeof Command>,
 ): Promise<void> {
   const checkpointer = await getCheckpointer();
   const graph = builder.compile({ checkpointer });

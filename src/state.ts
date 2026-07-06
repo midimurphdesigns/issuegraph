@@ -14,6 +14,13 @@ export const TriageState = Annotation.Root({
   // Inputs
   issue: Annotation<Issue>,
 
+  // When true, the gate always interrupts for human approval regardless
+  // of confidence. Lets the demo showcase human-in-the-loop on demand.
+  requireApproval: Annotation<boolean>({
+    reducer: (_prev, next) => next,
+    default: () => false,
+  }),
+
   // Filled by the classify node
   classification: Annotation<Classification | null>({
     reducer: (_prev, next) => next,

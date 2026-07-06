@@ -54,6 +54,9 @@ function stageForNode(node: string): StageId | null {
 export default function DemoClient({ presets }: { presets: PresetInfo[] }) {
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
+  // Default ON so the first run showcases the human-in-the-loop interrupt,
+  // the part of the graph this demo exists to show.
+  const [requireApproval, setRequireApproval] = useState(true);
   const [stages, setStages] = useState<Record<StageId, StageStatus>>({
     classify: "idle",
     draft: "idle",
@@ -176,7 +179,7 @@ export default function DemoClient({ presets }: { presets: PresetInfo[] }) {
         const res = await fetch("/api/triage", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ presetId }),
+          body: JSON.stringify({ presetId, requireApproval }),
         });
         await consumeSse(res);
       } catch (err) {
@@ -185,7 +188,7 @@ export default function DemoClient({ presets }: { presets: PresetInfo[] }) {
         setRunning(false);
       }
     },
-    [consumeSse],
+    [consumeSse, requireApproval],
   );
 
   const decide = useCallback(
@@ -227,6 +230,22 @@ export default function DemoClient({ presets }: { presets: PresetInfo[] }) {
             </button>
           ))}
         </div>
+        <label className={`hitl-toggle${requireApproval ? " on" : ""}`}>
+          <input
+            type="checkbox"
+            checked={requireApproval}
+            disabled={running}
+            onChange={(e) => setRequireApproval(e.target.checked)}
+          />
+          <span className="box" aria-hidden />
+          <span className="text">
+            <strong>Human in the loop:</strong> pause the graph and ask me
+            before finalizing
+            <span className="sub">
+              off = the agent only asks when its own confidence is low
+            </span>
+          </span>
+        </label>
       </section>
 
       <section>
@@ -244,8 +263,10 @@ export default function DemoClient({ presets }: { presets: PresetInfo[] }) {
           <div className="interrupt">
             <h3>The graph paused and is waiting for you.</h3>
             <div className="why mono">
-              confidence {interruptInfo.payload.confidence} is below the gate; the
-              graph called interrupt() and checkpointed its state
+              {interruptInfo.payload.reason}; the graph called interrupt(),
+              checkpointed its state (confidence{" "}
+              {interruptInfo.payload.confidence}), and will resume with your
+              decision
             </div>
             <div className="draft">{interruptInfo.payload.draft}</div>
             <div className="actions">

@@ -14,7 +14,10 @@ import { sseResponse, streamGraphRun } from "@/demo/stream-run";
 
 export const maxDuration = 120;
 
-const Body = z.object({ presetId: z.string().min(1).max(64) });
+const Body = z.object({
+  presetId: z.string().min(1).max(64),
+  requireApproval: z.boolean().optional().default(false),
+});
 
 export async function POST(req: NextRequest) {
   const ip =
@@ -36,6 +39,9 @@ export async function POST(req: NextRequest) {
 
   const threadId = `demo-${preset.id}-${crypto.randomUUID()}`;
   return sseResponse((emit) =>
-    streamGraphRun(emit, threadId, { issue: preset.issue }),
+    streamGraphRun(emit, threadId, {
+      issue: preset.issue,
+      requireApproval: parsed.data.requireApproval,
+    }),
   );
 }

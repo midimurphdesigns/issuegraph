@@ -56,8 +56,9 @@ export default async function Page() {
       <p className="tagline">
         A GitHub issue triage agent built on LangGraph. It classifies an issue,
         routes it to a specialist drafter, loops the reply through a quality
-        guard, and pauses for human approval when its own confidence is low.
-        This page runs the real graph, streaming each node as it executes.
+        guard, and pauses for your approval before finalizing, on demand or
+        whenever its own confidence is low. This page runs the real graph,
+        streaming each node as it executes.
       </p>
 
       <DemoClient presets={presets} />

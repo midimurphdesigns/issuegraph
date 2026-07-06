@@ -86,7 +86,9 @@ pnpm dev                         # the demo UI on localhost:3006
 
 The web demo triages curated preset issues only. Arbitrary input on a public LLM endpoint invites prompt injection and unbounded spend, so the input surface is a fixed allowlist, rate-limited per IP with a global daily budget (Upstash, fail-closed in production).
 
-`interrupt()` requires checkpoints that survive between the pause request and the resume request. Serverless instances do not share memory, so the demo uses a Redis checkpointer in production and falls back to an in-memory saver for local dev. The TCP connection string is derived automatically from `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (the same pair the rate limiter uses); set `REDIS_URL` only if you want to point the checkpointer somewhere else.
+`interrupt()` requires checkpoints that survive between the pause request and the resume request. Serverless instances do not share memory, so the demo persists checkpoints to Redis. The official `@langchain/langgraph-checkpoint-redis` saver needs the RediSearch module (`FT.CREATE`), which serverless Redis providers like Upstash do not support, so the demo ships a minimal custom saver ([`src/demo/upstash-saver.ts`](src/demo/upstash-saver.ts)) that implements the `BaseCheckpointSaver` contract with plain key/value commands over the same `UPSTASH_REDIS_REST_*` env vars the rate limiter uses. Local dev without those vars falls back to an in-memory saver.
+
+The "Human in the loop" toggle on the demo forces the confidence gate to `interrupt()` on every run, so the pause-approve-resume cycle is demonstrable on demand rather than only when the classifier happens to be unsure.
 
 ### Spend + abuse guardrails
 

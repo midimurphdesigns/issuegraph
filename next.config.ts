@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   // the server bundle doesn't try to inline their dynamic requires.
   serverExternalPackages: [
     "@langchain/langgraph",
-    "@langchain/langgraph-checkpoint-redis",
+    "@langchain/langgraph-checkpoint",
     "@langchain/anthropic",
     "@langchain/core",
     "langsmith",
