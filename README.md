@@ -86,7 +86,7 @@ pnpm dev                         # the demo UI on localhost:3006
 
 The web demo triages curated preset issues only. Arbitrary input on a public LLM endpoint invites prompt injection and unbounded spend, so the input surface is a fixed allowlist, rate-limited per IP with a global daily budget (Upstash, fail-closed in production).
 
-`interrupt()` requires checkpoints that survive between the pause request and the resume request. Serverless instances do not share memory, so the demo uses a Redis checkpointer (`REDIS_URL`) in production and falls back to an in-memory saver for local dev.
+`interrupt()` requires checkpoints that survive between the pause request and the resume request. Serverless instances do not share memory, so the demo uses a Redis checkpointer in production and falls back to an in-memory saver for local dev. The TCP connection string is derived automatically from `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` (the same pair the rate limiter uses); set `REDIS_URL` only if you want to point the checkpointer somewhere else.
 
 ### Spend + abuse guardrails
 
