@@ -71,7 +71,7 @@ export const PRESETS: Preset[] = [
   {
     id: "slow-after-update",
     label: "Slow after update",
-    hint: "ambiguous: bug or question? often trips the confidence gate",
+    hint: "ambiguous on purpose: low confidence, asks a human even with the toggle off",
     expected: null,
     issue: {
       ...base,
