@@ -7,8 +7,8 @@
  * channels keep their previous value.
  */
 import { Annotation } from "@langchain/langgraph";
-import type { Issue } from "./github.js";
-import type { Classification } from "./classify.js";
+import type { Issue } from "./github";
+import type { Classification } from "./classify";
 
 export const TriageState = Annotation.Root({
   // Inputs

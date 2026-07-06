@@ -12,7 +12,7 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { z } from "zod";
-import type { Issue } from "./github.js";
+import type { Issue } from "./github";
 
 export const CATEGORIES = ["bug", "feature", "docs", "question"] as const;
 

@@ -5,6 +5,9 @@
   "description": "GitHub issue triage agent built on LangGraph, with LangSmith-traced evals and a confidence calibration report",
   "type": "module",
   "scripts": {
+    "dev": "next dev -p 3006",
+    "build": "next build",
+    "start": "next start",
     "triage": "tsx src/cli.ts",
     "eval": "tsx src/run-evals.ts",
     "typecheck": "tsc --noEmit",
@@ -23,12 +26,20 @@
     "@langchain/anthropic": "^1.5.1",
     "@langchain/core": "^1.2.1",
     "@langchain/langgraph": "^1.4.7",
+    "@langchain/langgraph-checkpoint-redis": "^1.0.10",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "dotenv": "^17.4.2",
     "langsmith": "^0.7.15",
+    "next": "^16.2.10",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "tsx": "^4.23.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.9"

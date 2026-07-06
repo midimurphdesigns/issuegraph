@@ -14,7 +14,7 @@ import {
   TriageState,
   type TriageStateType,
   CONFIDENCE_GATE,
-} from "./state.js";
+} from "./state";
 import {
   classifyNode,
   draftBugNode,
@@ -22,7 +22,7 @@ import {
   draftDocsNode,
   draftQuestionNode,
   guardNode,
-} from "./nodes.js";
+} from "./nodes";
 
 // ── Conditional edge: pick the specialist draft node by category ──────
 function routeByCategory(state: TriageStateType): string {

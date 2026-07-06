@@ -9,9 +9,9 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { z } from "zod";
-import { classifyIssue } from "./classify.js";
-import type { TriageStateType } from "./state.js";
-import { MAX_REDRAFTS } from "./state.js";
+import { classifyIssue } from "./classify";
+import type { TriageStateType } from "./state";
+import { MAX_REDRAFTS } from "./state";
 
 const model = new ChatAnthropic({
   model: "claude-sonnet-4-5",

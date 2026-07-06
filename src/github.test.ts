@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseIssueUrl } from "./github.js";
+import { parseIssueUrl } from "./github";
 
 describe("parseIssueUrl", () => {
   it("parses a valid issue URL", () => {

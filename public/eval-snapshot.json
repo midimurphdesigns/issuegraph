@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-07-06T16:09:07.125Z",
+  "examples": 8,
+  "categoryAccuracy": 1,
+  "draftQualityPassRate": 1,
+  "brierScore": 0.0025000000000000044,
+  "reliability": [
+    {
+      "range": "0.9-1.0",
+      "count": 8,
+      "meanConfidence": 0.9500000000000001,
+      "actualAccuracy": 1,
+      "verdict": "calibrated"
+    }
+  ]
+}

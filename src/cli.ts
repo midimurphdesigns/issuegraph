@@ -8,8 +8,8 @@
 import "dotenv/config";
 import { createInterface } from "node:readline/promises";
 import { MemorySaver } from "@langchain/langgraph";
-import { fetchIssue } from "./github.js";
-import { builder, Command } from "./graph.js";
+import { fetchIssue } from "./github";
+import { builder, Command } from "./graph";
 
 const url = process.argv[2];
 if (!url) {

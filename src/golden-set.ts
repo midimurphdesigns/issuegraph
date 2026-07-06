@@ -6,7 +6,7 @@
  * the right answer is). Small on purpose — a real golden set grows over
  * time as you find issues the model gets wrong.
  */
-import type { Issue } from "./github.js";
+import type { Issue } from "./github";
 
 export type GoldenExample = {
   input: Pick<Issue, "title" | "body" | "labels" | "owner" | "repo">;

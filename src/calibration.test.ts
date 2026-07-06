@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { brierScore, reliabilityBuckets, type Sample } from "./calibration.js";
+import { brierScore, reliabilityBuckets, type Sample } from "./calibration";
 
 describe("brierScore", () => {
   it("is 0 for perfect confident predictions", () => {
