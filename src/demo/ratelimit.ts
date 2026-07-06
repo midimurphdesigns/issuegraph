@@ -2,8 +2,8 @@
  * Rate limiting for the public demo endpoint.
  *
  * Two layers:
- *   1. Per-IP sliding window (10 runs/hour) — stops one visitor hammering it.
- *   2. Global daily budget (200 runs/day) — caps total spend no matter what.
+ *   1. Per-IP sliding window (30 runs/hour) — stops one visitor hammering it.
+ *   2. Global daily budget (default 75 runs/day) — caps total spend no matter what.
  *
  * Fail-closed in production: if Upstash env vars are missing on a deployed
  * instance, requests are refused rather than silently unmetered.
@@ -17,10 +17,13 @@ const HAS_UPSTASH = Boolean(
 
 const redis = HAS_UPSTASH ? Redis.fromEnv() : null;
 
+// 30/hour: enough for an engaged visitor to explore every preset in both
+// toggle states with retries. The global daily budget below is the spend
+// backstop, so the per-IP window is about fairness, not cost.
 const perIp = redis
   ? new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(10, "1 h"),
+      limiter: Ratelimit.slidingWindow(30, "1 h"),
       prefix: "issuegraph:ip",
     })
   : null;
@@ -58,7 +61,7 @@ export async function checkLimits(
     return {
       ok: false,
       status: 429,
-      message: "Rate limit reached (10 runs/hour). Try again later.",
+      message: "Rate limit reached (30 runs/hour). Try again later.",
     };
   }
 

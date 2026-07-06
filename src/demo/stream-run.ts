@@ -107,12 +107,14 @@ export async function streamGraphRun(
     )) {
       if (node === "__interrupt__") continue; // handled below via getState
       // Record the classify outcome to the live scoreboard once per run.
-      // Fire-and-forget: a scoreboard write must never block the stream.
+      // Awaited (it is one cheap Redis write): fire-and-forget promises can
+      // be dropped when a serverless invocation ends, and the scoreboard
+      // must never miss a run.
       if (node === "classify" && presetId) {
         const c = (update as { classification?: { category?: Category; confidence?: number } })
           .classification;
         if (c?.category) {
-          void recordRun(presetId, c.category, c.confidence ?? 0);
+          await recordRun(presetId, c.category, c.confidence ?? 0);
         }
       }
       emit({ type: "node", node, update: sanitizeUpdate(update) });

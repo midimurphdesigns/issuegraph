@@ -96,12 +96,14 @@ export default function DemoClient({ presets }: { presets: PresetInfo[] }) {
       setStages((s) => ({ ...s, gate: "running" }));
       setDetails((d) => ({ ...d, gate: "paused: waiting for a human" }));
       setInterruptInfo({ threadId: e.threadId, payload: e.payload });
+      setScoreboardKey((k) => k + 1);
       return;
     }
     if (e.type === "done") {
       setStages((s) => ({ ...s, gate: "done" }));
       setDetails((d) => ({ ...d, gate: e.result.status }));
       setResult(e.result);
+      setScoreboardKey((k) => k + 1);
       return;
     }
 

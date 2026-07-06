@@ -29,14 +29,21 @@ export default function LiveScoreboard({ refreshKey }: { refreshKey: number }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/scoreboard", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((b: Scoreboard) => {
-        if (!cancelled) setBoard(b);
-      })
-      .catch(() => {});
+    const load = () => {
+      fetch("/api/scoreboard", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((b: Scoreboard) => {
+          if (!cancelled) setBoard(b);
+        })
+        .catch(() => {});
+    };
+    load();
+    // Background poll so runs from other visitors (and any write that
+    // landed after the event-driven refetch) appear without interaction.
+    const interval = window.setInterval(load, 20_000);
     return () => {
       cancelled = true;
+      window.clearInterval(interval);
     };
   }, [refreshKey]);
 
