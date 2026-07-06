@@ -2,6 +2,8 @@
 
 A GitHub issue triage agent built on **LangGraph**, traced and evaluated with **LangSmith**.
 
+**Live demo: [issuegraph.kevinmurphywebdev.com](https://issuegraph.kevinmurphywebdev.com)** — runs the real graph server-side and streams each node to the page as it executes. The ambiguous preset usually trips the confidence gate, pauses the graph mid-run, and waits for you to approve or reject the draft.
+
 Feed it a public GitHub issue URL. A state graph classifies the issue, routes it to a specialist draft node, quality-checks the draft in a bounded loop, then applies a confidence gate: high-confidence results finalize automatically while low-confidence results pause the graph and wait for human approval.
 
 ## How it works
@@ -74,9 +76,16 @@ npx tsx src/hello-trace.ts   # smoke test: one traced model call
 ## Usage
 
 ```sh
-pnpm triage <github-issue-url>   # triage one issue end-to-end
+pnpm triage <github-issue-url>   # triage one issue end-to-end (CLI)
 pnpm eval                        # golden set + calibration report
 pnpm test                        # unit tests
+pnpm dev                         # the demo UI on localhost:3006
 ```
+
+## Demo architecture notes
+
+The web demo triages curated preset issues only. Arbitrary input on a public LLM endpoint invites prompt injection and unbounded spend, so the input surface is a fixed allowlist, rate-limited per IP with a global daily budget (Upstash, fail-closed in production).
+
+`interrupt()` requires checkpoints that survive between the pause request and the resume request. Serverless instances do not share memory, so the demo uses a Redis checkpointer (`REDIS_URL`) in production and falls back to an in-memory saver for local dev.
 
 MIT
